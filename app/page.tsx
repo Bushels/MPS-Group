@@ -1,19 +1,21 @@
 'use client';
 
+import { useInView } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
 import {
   Activity,
-  AlertCircle,
   Anchor,
   ArrowRight,
   CheckCircle,
   ChevronRight,
   Container,
-  Cpu,
   Database,
+  Facebook,
   Flame,
   GitMerge,
+  Instagram,
   Layers,
+  Linkedin,
   Mail,
   MapPin,
   Menu,
@@ -23,12 +25,16 @@ import {
   ShieldCheck,
   Target,
   Truck,
+  Twitter,
   Users,
+  Wifi,
   Wrench,
   X,
 } from 'lucide-react';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import AnimatedLogo from '../components/AnimatedLogo';
+import PipeBackground from '../components/PipeBackgroundClient';
 
 // --- HELPER COMPONENTS ---
 
@@ -59,9 +65,13 @@ interface StatsWidgetProps {
 
 const StatsWidget = ({ icon: Icon, value, label, unit, color, decimals = 0 }: StatsWidgetProps) => {
   const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   // Simple count-up effect on mount
   useEffect(() => {
+    if (!isInView) return;
+
     let start = 0;
     const end = value;
     const duration = 2000;
@@ -77,23 +87,27 @@ const StatsWidget = ({ icon: Icon, value, label, unit, color, decimals = 0 }: St
       }
     }, 16);
     return () => clearInterval(timer);
-  }, [value]);
+  }, [value, isInView]);
 
   return (
-    <GlassCard className="group flex h-full flex-col justify-between transition-colors hover:border-white/20">
-      <div
-        className={`mb-4 w-fit rounded-lg p-3 ${color === 'red' ? 'bg-red-600/10 text-red-600' : 'bg-blue-600/20 text-blue-500'}`}
-      >
-        <Icon className="h-6 w-6" />
-      </div>
-      <div>
-        <div className="mb-1 font-mono text-3xl font-bold tracking-tighter text-white">
-          {count.toLocaleString(undefined, { maximumFractionDigits: decimals })}
-          {unit && <span className="ml-1 text-lg text-slate-500">{unit}</span>}
+    <div ref={ref} className="h-full">
+      <GlassCard className="group flex h-full flex-col justify-between transition-colors hover:border-white/20">
+        <div
+          className={`mb-4 w-fit rounded-lg p-3 ${color === 'red' ? 'bg-red-600/10 text-red-600' : 'bg-blue-600/20 text-blue-500'}`}
+        >
+          <Icon className="h-6 w-6" />
         </div>
-        <div className="text-xs font-medium uppercase tracking-widest text-slate-400">{label}</div>
-      </div>
-    </GlassCard>
+        <div>
+          <div className="mb-1 font-mono text-3xl font-bold tracking-tighter text-white">
+            {count.toLocaleString(undefined, { maximumFractionDigits: decimals })}
+            {unit && <span className="ml-1 text-lg text-slate-500">{unit}</span>}
+          </div>
+          <div className="text-xs font-medium tracking-widest text-slate-400 uppercase">
+            {label}
+          </div>
+        </div>
+      </GlassCard>
+    </div>
   );
 };
 
@@ -148,6 +162,25 @@ export default function Home() {
         .animate-marquee {
           animation: marquee 30s linear infinite;
         }
+        @keyframes scan-overlay {
+          0% {
+            top: -100%;
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            top: 200%;
+            opacity: 0;
+          }
+        }
+        .animate-scan-overlay {
+          animation: scan-overlay 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
       `}</style>
 
       {/* --- UTILITY TOP BAR --- */}
@@ -172,26 +205,12 @@ export default function Home() {
 
       {/* --- MAIN NAVIGATION --- */}
       <nav
-        className={`fixed left-0 right-0 z-40 transition-all duration-500 ${scrolled ? 'top-0 border-b border-white/10 bg-[#050505]/90 py-3 backdrop-blur-xl' : 'top-8 bg-transparent py-6'}`}
+        className={`fixed right-0 left-0 z-40 transition-all duration-500 ${scrolled ? 'top-0 border-b border-white/10 bg-[#050505]/90 py-3 backdrop-blur-xl' : 'top-8 bg-transparent py-6'}`}
       >
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6">
           {/* Logo Area */}
           <div className="group flex cursor-pointer items-center gap-3">
-            <div className="relative flex flex-col justify-center">
-              <h1 className="text-3xl font-extrabold leading-none tracking-tighter text-red-700">
-                MPS
-              </h1>
-              <div className="mt-1 h-1 w-full origin-left transform rounded-full bg-blue-700 transition-transform group-hover:scale-x-110"></div>
-            </div>
-            <div className="mx-2 h-8 w-px bg-white/10"></div>
-            <div className="flex flex-col justify-center">
-              <span className="block text-sm font-bold leading-none tracking-widest text-white">
-                GROUP
-              </span>
-              <span className="mt-0.5 block text-[9px] uppercase tracking-widest text-slate-400">
-                Industrial Services
-              </span>
-            </div>
+            <AnimatedLogo />
           </div>
 
           {/* Main Links */}
@@ -200,7 +219,7 @@ export default function Home() {
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="text-xs font-bold uppercase tracking-widest text-slate-300 transition-colors hover:text-red-600"
+                className="text-xs font-bold tracking-widest text-slate-300 uppercase transition-colors hover:text-red-600"
               >
                 {item}
               </a>
@@ -209,8 +228,8 @@ export default function Home() {
 
           {/* CTA */}
           <div className="hidden items-center gap-6 lg:flex">
-            <button className="rounded bg-red-700 px-6 py-3 text-xs font-bold uppercase tracking-widest text-white shadow-lg shadow-red-900/20 transition-all hover:bg-red-800">
-              Get a Quote
+            <button className="rounded bg-red-700 px-6 py-3 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-red-900/20 transition-all hover:bg-red-800">
+              Contact Us
             </button>
           </div>
 
@@ -225,43 +244,31 @@ export default function Home() {
 
       {/* --- HERO SECTION: THE YARD --- */}
       <section className="relative flex h-screen items-center overflow-hidden bg-[#050505]">
-        {/* Background Images & Effects */}
-        <div className="absolute inset-0 z-0">
+        {' '}
+        {/* Background: Three.js OCTG Pipe with Laser Scan */}
+        <PipeBackground />
+        {/* Shop Image as subtle backdrop (reduced opacity) */}
+        <div className="absolute inset-0 z-10">
           <div className="absolute inset-0 h-full w-full overflow-hidden">
             <Image
               src="/images/shop.png"
               alt="MPS 136 Acre Facility"
               fill
-              className="object-cover opacity-40 brightness-50 contrast-125 grayscale"
+              className="object-cover opacity-10 mix-blend-overlay brightness-50 contrast-125 grayscale"
               priority
             />
           </div>
-          <div className="absolute inset-0 bg-[#050505]/80"></div>
+          <div className="absolute inset-0 bg-[#050505]/60"></div>
         </div>
-
-        {/* Laser Scan Effect */}
-        <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
-          {/* The Red Laser Line */}
-          <div className="laser-beam absolute left-0 z-20 h-[2px] w-full bg-red-600 shadow-[0_0_20px_#D32F2F,0_0_40px_#D32F2F]"></div>
-
-          {/* The Reveal Mask */}
-          <div className="pipe-gloss-reveal absolute inset-0 z-10 h-[30vh] w-full -translate-y-1/2 bg-gradient-to-b from-transparent via-white/10 to-transparent mix-blend-overlay"></div>
-
-          {/* The "Glossy Pipe" Texture that gets revealed */}
-          <div className="absolute inset-0 h-full w-full opacity-30 mix-blend-overlay">
-            <div className="pipe-texture h-full w-full"></div>
-          </div>
-        </div>
-
         {/* Hero Content */}
         <div className="relative z-30 mx-auto grid w-full max-w-[1600px] items-center gap-12 px-6 lg:grid-cols-12">
           {/* Left: The Value Prop */}
           <div className="space-y-8 pt-20 lg:col-span-7">
-            <div className="inline-flex animate-pulse items-center gap-3 rounded border border-red-900/50 bg-red-900/20 px-4 py-2 text-xs font-bold uppercase tracking-widest text-red-500">
+            <div className="inline-flex animate-pulse items-center gap-3 rounded border border-red-900/50 bg-red-900/20 px-4 py-2 text-xs font-bold tracking-widest text-red-500 uppercase">
               <Target className="h-4 w-4" /> Limited Capacity Event
             </div>
 
-            <h1 className="text-7xl font-bold leading-[0.85] tracking-tighter text-white md:text-9xl">
+            <h1 className="text-7xl leading-[0.85] font-bold tracking-tighter text-white md:text-9xl">
               136 ACRES. <br />
               <span className="text-red-600">$0 STORAGE.</span>
             </h1>
@@ -272,45 +279,21 @@ export default function Home() {
               <strong className="mt-2 block text-white">Supply Chain Certainty Starts Here.</strong>
             </p>
 
-            {/* The Panic Bar */}
-            <div className="group relative mt-8 w-full max-w-xl overflow-hidden rounded-lg border border-white/10 bg-slate-900/80 p-1 backdrop-blur-md">
-              <div className="flex flex-col gap-4 p-5">
-                <div className="flex items-end justify-between text-xs font-bold uppercase tracking-widest">
-                  <span className="flex items-center gap-2 text-slate-400">
-                    <AlertCircle className="h-3 w-3 text-red-600" /> Yard Capacity Status
-                  </span>
-                  <span className="animate-pulse text-sm text-red-500">92% RESERVED</span>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="relative flex h-6 gap-0.5 overflow-hidden rounded border border-white/5 bg-slate-950 p-0.5">
-                  {Array.from({ length: 40 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={`h-full flex-1 rounded-sm transition-all duration-500 ${
-                        i < 37 ? 'bg-red-700 shadow-[0_0_10px_#D32F2F]' : 'bg-slate-800'
-                      }`}
-                    ></div>
-                  ))}
-                </div>
-
-                <div className="mt-1 flex flex-col items-center justify-between gap-4 sm:flex-row">
-                  <div className="flex items-center gap-2 font-mono text-[10px] text-slate-500">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>3
-                    new racks reserved today
-                  </div>
-                  <button className="flex w-full items-center justify-center gap-2 rounded bg-blue-700 px-6 py-3 text-xs font-bold uppercase tracking-widest text-white shadow-lg shadow-blue-900/50 transition-all hover:translate-x-1 hover:bg-blue-600 sm:w-auto">
-                    Claim Remaining Space <ArrowRight className="h-3 w-3" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            {/* The Panic Bar - REMOVED and consolidated into Right HUD */}
           </div>
 
           {/* Right: PipeVault HUD */}
           <div className="relative hidden lg:col-span-5 lg:block">
-            <div className="group relative overflow-hidden rounded-xl border border-white/10 bg-black/40 p-1 backdrop-blur-md">
-              <div className="flex items-center justify-between rounded-t-lg border-b border-white/10 bg-black/40 p-4">
+            <div className="group relative overflow-hidden rounded-xl border border-white/10 bg-black/20 p-1 backdrop-blur-xl transition-all duration-500 hover:bg-black/30 hover:shadow-[0_0_30px_rgba(0,0,0,0.5)] hover:backdrop-blur-2xl">
+              {/* Glass Highlight */}
+              <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-br from-white/5 to-transparent opacity-50"></div>
+
+              {/* Laser Scan Overlay */}
+              <div className="animate-scan-overlay pointer-events-none absolute inset-x-0 z-20 h-32 bg-gradient-to-b from-transparent via-red-500/10 to-transparent mix-blend-overlay">
+                <div className="absolute bottom-0 h-px w-full bg-red-500/50 shadow-[0_0_15px_rgba(220,38,38,0.8)]"></div>
+              </div>
+
+              <div className="relative flex items-center justify-between rounded-t-lg border-b border-white/5 bg-black/20 p-4 backdrop-blur-sm">
                 <div className="flex items-center gap-2 font-mono text-xs text-red-500">
                   <span className="h-2 w-2 animate-pulse rounded-full bg-red-500"></span>
                   PIPEVAULT™ // LIVE INVENTORY
@@ -318,25 +301,54 @@ export default function Home() {
                 <Database className="h-4 w-4 text-slate-500" />
               </div>
 
-              <div className="relative overflow-hidden bg-[#0a0f16] p-8 text-center">
-                <div className="relative z-10 py-4">
-                  <div className="relative mb-6 inline-flex">
-                    <div className="absolute inset-0 animate-pulse bg-red-600 opacity-20 blur-xl"></div>
-                    <Layers className="relative z-10 h-16 w-16 text-red-600" />
+              <div className="relative overflow-hidden bg-[#0a0f16]/40 p-8 backdrop-blur-sm">
+                <div className="relative z-10 space-y-6">
+                  {/* Header Section */}
+                  <div className="flex items-start gap-4">
+                    <div className="relative flex-shrink-0">
+                      <div className="absolute inset-0 animate-pulse bg-red-600 opacity-20 blur-xl"></div>
+                      <Layers className="relative z-10 h-12 w-12 text-red-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-white">Secure Your Pipe.</h3>
+                      <p className="text-sm text-slate-400">
+                        Real-time tracking. Zero storage fees.
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="mb-2 text-2xl font-bold text-white">Secure Your Pipe.</h3>
-                  <p className="mx-auto mb-8 max-w-xs text-sm text-slate-400">
-                    Reserve space directly in our PipeVault system. Real-time tracking, zero storage
-                    fees.
-                  </p>
-                  <button className="flex w-full items-center justify-center gap-2 rounded bg-blue-700 py-4 text-xs font-bold uppercase tracking-widest text-white shadow-lg shadow-blue-900/30 transition-all hover:bg-blue-600 hover:shadow-blue-500/50">
-                    View Facility Map <ChevronRight className="h-3 w-3" />
+
+                  {/* Capacity Meter (Integrated) */}
+                  <div className="space-y-2 rounded-lg border border-white/5 bg-black/20 p-4 backdrop-blur-sm">
+                    <div className="flex items-end justify-between text-[10px] font-bold tracking-widest uppercase">
+                      <span className="text-slate-400">Yard Capacity</span>
+                      <span className="text-red-500">92% RESERVED</span>
+                    </div>
+                    <div className="relative flex h-4 gap-0.5 overflow-hidden rounded border border-white/5 bg-slate-950/50 p-0.5">
+                      {Array.from({ length: 30 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className={`h-full flex-1 rounded-sm transition-all duration-500 ${
+                            i < 27 ? 'bg-red-700/80 shadow-[0_0_8px_#D32F2F]' : 'bg-slate-800/30'
+                          }`}
+                        ></div>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2 font-mono text-[10px] text-slate-500">
+                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>3
+                      new racks reserved today
+                    </div>
+                  </div>
+
+                  {/* Unified CTA */}
+                  <button className="group/btn flex w-full items-center justify-center gap-2 rounded bg-blue-700/90 py-4 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-blue-900/30 backdrop-blur-sm transition-all hover:bg-blue-600 hover:shadow-blue-500/50">
+                    Claim Space & View Map{' '}
+                    <ChevronRight className="h-3 w-3 transition-transform group-hover/btn:translate-x-1" />
                   </button>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between border-t border-white/10 bg-black/80 p-4">
-                <span className="text-[10px] uppercase tracking-widest text-slate-500">
+              <div className="flex items-center justify-between border-t border-white/10 bg-black/60 p-4 backdrop-blur-md">
+                <span className="text-[10px] tracking-widest text-slate-500 uppercase">
                   136 Acres Total
                 </span>
                 <div className="flex items-center gap-2">
@@ -374,30 +386,29 @@ export default function Home() {
       <section className="relative overflow-hidden border-b border-white/5 bg-[#0a0a0a] py-16">
         <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-r from-[#0a0a0a] via-transparent to-[#0a0a0a]"></div>
         <div className="mx-auto mb-8 max-w-[1400px] px-6 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest text-slate-500">
-            Trusted by Industry Leaders
+          <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">
+            Trusted By Industry Leaders
           </p>
         </div>
-        <div className="flex w-full overflow-hidden">
-          <div className="flex min-w-full animate-marquee items-center gap-24 px-12">
-            {[
-              'CENOVUS',
-              'CANADIAN NATURAL',
-              'STRATHCONA RESOURCES',
-              'IMPERIAL',
-              'CENOVUS',
-              'CANADIAN NATURAL',
-              'STRATHCONA RESOURCES',
-              'IMPERIAL',
-            ].map((partner, i) => (
-              <span
-                key={i}
-                className="cursor-default select-none whitespace-nowrap font-mono text-2xl font-bold uppercase tracking-tighter text-slate-700 transition-colors hover:text-white"
-              >
-                {partner}
-              </span>
-            ))}
-          </div>
+
+        <div className="animate-marquee flex min-w-full items-center gap-24 px-12">
+          {[
+            { name: 'Cenovus', logo: '/images/partners/cenovus.png' },
+            { name: 'Canadian Natural', logo: '/images/partners/cnrl.png' },
+            { name: 'Strathcona', logo: '/images/partners/strathcona.png' },
+            { name: 'Imperial', logo: '/images/partners/imperial.png' },
+            { name: 'Cenovus', logo: '/images/partners/cenovus.png' },
+            { name: 'Canadian Natural', logo: '/images/partners/cnrl.png' },
+            { name: 'Strathcona', logo: '/images/partners/strathcona.png' },
+            { name: 'Imperial', logo: '/images/partners/imperial.png' },
+          ].map((partner, i) => (
+            <div
+              key={i}
+              className="relative h-12 w-48 opacity-50 grayscale transition-all duration-500 hover:scale-110 hover:opacity-100 hover:grayscale-0"
+            >
+              <Image src={partner.logo} alt={partner.name} fill className="object-contain" />
+            </div>
+          ))}
         </div>
       </section>
 
@@ -412,7 +423,7 @@ export default function Home() {
                 lifespan.
               </p>
             </div>
-            <button className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-red-500 transition-colors hover:text-white">
+            <button className="flex items-center gap-2 text-sm font-bold tracking-widest text-red-500 uppercase transition-colors hover:text-white">
               View All Capabilities <ChevronRight className="h-4 w-4" />
             </button>
           </div>
@@ -428,10 +439,10 @@ export default function Home() {
                 <div className="flex items-center gap-2 rounded border border-white/10 bg-black/40 px-3 py-1.5 backdrop-blur-md">
                   <Activity className="h-3 w-3 text-green-500" />
                   <div className="flex flex-col text-right">
-                    <span className="mb-0.5 text-[9px] uppercase leading-none tracking-widest text-slate-500">
+                    <span className="mb-0.5 text-[9px] leading-none tracking-widest text-slate-500 uppercase">
                       Shop Load
                     </span>
-                    <span className="text-[10px] font-bold leading-none text-white">
+                    <span className="text-[10px] leading-none font-bold text-white">
                       84% OPTIMAL
                     </span>
                   </div>
@@ -490,32 +501,117 @@ export default function Home() {
             </GlassCard>
           </div>
 
-          {/* Innovation Wing (Downhole) */}
+          {/* Innovation Wing (Downhole) - V2 Telemetry Design */}
           <div
             id="products"
-            className="group relative w-full overflow-hidden rounded-2xl border border-red-900/30 bg-[#0F172A]"
+            className="group relative w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0F172A]"
           >
-            <div className="absolute inset-0 bg-[linear-gradient(45deg,#1e293b_1px,transparent_1px)] bg-[size:20px_20px] opacity-20"></div>
-            <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-red-600/10 blur-[100px] transition-colors duration-700 group-hover:bg-red-600/20"></div>
-            <div className="relative z-10 grid items-center gap-12 p-12 lg:grid-cols-2">
-              <div className="space-y-6">
-                <div className="inline-flex items-center gap-2 rounded-full border border-red-900/30 bg-red-900/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-red-500">
-                  <Cpu className="h-4 w-4" /> Product Division
+            {/* Animated Grid Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear_gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A] via-transparent to-[#0F172A]"></div>
+
+            <div className="relative z-10 grid lg:grid-cols-12">
+              {/* Left: Brand & Context */}
+              <div className="relative border-r border-white/5 p-6 lg:col-span-5 lg:p-12">
+                <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-[10px] font-bold tracking-widest text-blue-400 uppercase">
+                  <Wifi className="h-3 w-3" /> Live Telemetry
                 </div>
-                <h3 className="text-4xl font-bold text-white">Downhole Technologies</h3>
-                <p className="max-w-md text-lg leading-relaxed text-slate-300">
-                  Proprietary engineered systems for the extreme. Our <strong>WellFi™</strong> and{' '}
-                  <strong>PipeVault™</strong> product lines deliver zero-failure performance.
+
+                <h3 className="mb-2 text-4xl font-black tracking-tighter text-white lg:text-6xl">
+                  WELL<span className="text-red-600">FI</span>
+                </h3>
+                <p className="mb-8 font-mono text-xs tracking-widest text-slate-500 uppercase">
+                  Downhole Intelligence System
                 </p>
-                <div className="flex gap-4 pt-4">
-                  <button className="flex items-center gap-2 rounded bg-white px-8 py-4 text-xs font-bold uppercase tracking-widest text-black transition-colors hover:bg-slate-200">
-                    Launch Tool Selector <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
+
+                <p className="mb-8 text-lg leading-relaxed text-slate-300">
+                  The industry's first <span className="font-bold text-white">zero-cable</span> data
+                  transmission tool. Receive pressure, temperature, and vibration data in real-time.
+                </p>
+
+                <button className="group flex w-full items-center justify-between rounded border border-white/10 bg-white/5 px-6 py-4 transition-all hover:bg-white/10">
+                  <span className="text-xs font-bold tracking-widest text-white uppercase">
+                    View Tech Specs
+                  </span>
+                  <ArrowRight className="h-4 w-4 text-slate-400 transition-transform group-hover:translate-x-1" />
+                </button>
               </div>
-              <div className="relative flex h-full min-h-[200px] items-center justify-center border-l border-white/5 pl-12">
-                <div className="animate-pulse font-mono text-xs tracking-[0.5em] text-red-600">
-                  {/* SYSTEM ONLINE */}
+
+              {/* Right: Live Dashboard UI */}
+              <div className="relative bg-black/20 p-6 lg:col-span-7 lg:p-12">
+                {/* Dashboard Header */}
+                <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <span className="relative flex h-3 w-3">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
+                      </span>
+                      <span className="font-mono text-xs font-bold text-green-500">
+                        SYSTEM ACTIVE
+                      </span>
+                    </div>
+                    <div className="h-4 w-px bg-white/10"></div>
+                    <span className="font-mono text-xs text-slate-500">ID: WF-8829-X</span>
+                  </div>
+                  <div className="font-mono text-xl font-bold text-white">
+                    131 <span className="text-xs font-normal text-slate-500">UNITS DEPLOYED</span>
+                  </div>
+                </div>
+
+                {/* Data Grid */}
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {/* Depth */}
+                  <div className="relative overflow-hidden rounded-lg border border-white/10 bg-white/5 p-4">
+                    <div className="mb-2 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+                      Depth (MD)
+                    </div>
+                    <div className="font-mono text-2xl text-white">
+                      3,450<span className="text-sm text-slate-500">m</span>
+                    </div>
+                    <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
+                      <div className="h-full w-[75%] bg-blue-500"></div>
+                    </div>
+                  </div>
+
+                  {/* Temperature */}
+                  <div className="relative overflow-hidden rounded-lg border border-white/10 bg-white/5 p-4">
+                    <div className="mb-2 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+                      BHT
+                    </div>
+                    <div className="font-mono text-2xl text-white">
+                      142<span className="text-sm text-slate-500">°C</span>
+                    </div>
+                    <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
+                      <div className="h-full w-[60%] bg-red-500"></div>
+                    </div>
+                  </div>
+
+                  {/* Pressure */}
+                  <div className="relative overflow-hidden rounded-lg border border-white/10 bg-white/5 p-4">
+                    <div className="mb-2 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+                      Annulus
+                    </div>
+                    <div className="font-mono text-2xl text-white">
+                      42.5<span className="text-sm text-slate-500">MPa</span>
+                    </div>
+                    <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
+                      <div className="h-full w-[85%] bg-yellow-500"></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Live Feed Visualization */}
+                <div className="mt-4 rounded-lg border border-white/10 bg-black/40 p-4 font-mono text-[10px] text-green-500/80">
+                  <div className="mb-2 flex justify-between text-slate-600">
+                    <span>PACKET_STREAM</span>
+                    <span>128kbps</span>
+                  </div>
+                  <div className="space-y-1 opacity-70">
+                    <div className="truncate">RX: [00101101] TEMP_WARN_LIMIT_OK ... SYNC</div>
+                    <div className="truncate">RX: [00101110] VIB_AXIS_Z: 0.04g ... STABLE</div>
+                    <div className="truncate">TX: [11001001] PULSE_MOD_ACK ... SENT</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -530,10 +626,10 @@ export default function Home() {
       >
         <div className="relative z-10 mx-auto grid max-w-[1400px] items-center gap-20 lg:grid-cols-2">
           <div>
-            <div className="mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-500">
+            <div className="mb-6 inline-flex items-center gap-2 text-xs font-bold tracking-widest text-blue-500 uppercase">
               <Users className="h-4 w-4" /> Careers at MPS
             </div>
-            <h2 className="mb-6 text-5xl font-bold leading-tight text-white">
+            <h2 className="mb-6 text-5xl leading-tight font-bold text-white">
               BUILD YOUR <br /> <span className="text-red-600">LEGACY.</span>
             </h2>
             <p className="mb-10 max-w-lg text-lg leading-relaxed text-slate-400">
@@ -555,11 +651,11 @@ export default function Home() {
             <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-6">
               <div>
                 <h3 className="text-xl font-bold text-white">Priority Openings</h3>
-                <p className="mt-1 text-xs uppercase tracking-widest text-slate-500">
+                <p className="mt-1 text-xs tracking-widest text-slate-500 uppercase">
                   Pierceland & Field Operations
                 </p>
               </div>
-              <div className="animate-pulse rounded border border-green-500/20 bg-green-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-green-500">
+              <div className="animate-pulse rounded border border-green-500/20 bg-green-500/10 px-3 py-1 text-[10px] font-bold tracking-widest text-green-500 uppercase">
                 Hiring Active
               </div>
             </div>
@@ -573,7 +669,7 @@ export default function Home() {
                     <div className="text-sm font-bold text-white group-hover:text-red-500">
                       B-Pressure Welder
                     </div>
-                    <div className="text-[10px] uppercase text-slate-500">Shop & Field</div>
+                    <div className="text-[10px] text-slate-500 uppercase">Shop & Field</div>
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-slate-600 group-hover:text-white" />
@@ -587,7 +683,21 @@ export default function Home() {
                     <div className="text-sm font-bold text-white group-hover:text-blue-500">
                       Journeyman Pipefitter
                     </div>
-                    <div className="text-[10px] uppercase text-slate-500">Pierceland Yard</div>
+                    <div className="text-[10px] text-slate-500 uppercase">Pierceland Yard</div>
+                  </div>
+                </div>
+                <ArrowRight className="h-4 w-4 text-slate-600 group-hover:text-white" />
+              </div>
+              <div className="group flex cursor-pointer items-center justify-between rounded-lg border border-transparent p-4 transition-all hover:border-white/5 hover:bg-white/5">
+                <div className="flex items-center gap-4">
+                  <div className="rounded bg-green-900/10 p-2 text-green-500">
+                    <ShieldCheck className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-white group-hover:text-green-500">
+                      QC Inspector
+                    </div>
+                    <div className="text-[10px] text-slate-500 uppercase">Fabrication Shop</div>
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-slate-600 group-hover:text-white" />
@@ -598,11 +708,27 @@ export default function Home() {
       </section>
 
       {/* --- FOOTER --- */}
-      <footer className="relative z-10 border-t border-white/10 bg-black px-6 pb-10 pt-20">
-        <div className="mx-auto max-w-[1400px] text-center">
-          <p className="text-xs uppercase tracking-widest text-slate-600">
+      <footer className="relative z-10 border-t border-white/10 bg-black px-6 pt-20 pb-10">
+        <div className="mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-8 md:flex-row">
+          <p className="text-xs tracking-widest text-slate-600 uppercase">
             © 2025 MPS Group. All Rights Reserved.
           </p>
+          <div className="flex gap-6">
+            {[
+              { icon: Facebook, href: '#' },
+              { icon: Linkedin, href: '#' },
+              { icon: Twitter, href: '#' },
+              { icon: Instagram, href: '#' },
+            ].map((social, i) => (
+              <a
+                key={i}
+                href={social.href}
+                className="text-slate-600 transition-colors hover:text-white"
+              >
+                <social.icon className="h-5 w-5" />
+              </a>
+            ))}
+          </div>
         </div>
       </footer>
     </div>

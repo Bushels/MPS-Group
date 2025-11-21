@@ -18,6 +18,11 @@ export const metadata: Metadata = {
     'PipeVault',
   ],
   authors: [{ name: 'MPS Group' }],
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
+  },
   openGraph: {
     title: 'MPS Group - Industrial Services Excellence',
     description: '136 Acres. $0 Storage. Supply Chain Certainty Starts Here.',
@@ -25,6 +30,14 @@ export const metadata: Metadata = {
     siteName: 'MPS Group',
     locale: 'en_CA',
     type: 'website',
+    images: [
+      {
+        url: '/logo.png',
+        width: 800,
+        height: 600,
+        alt: 'MPS Group Logo',
+      },
+    ],
   },
 };
 

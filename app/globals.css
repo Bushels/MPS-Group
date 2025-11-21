@@ -1,14 +1,76 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  /* MPS Brand Colors */
+  --color-mps-red-50: #FFEBEE;
+  --color-mps-red-100: #FFCDD2;
+  --color-mps-red-200: #EF9A9A;
+  --color-mps-red-300: #E57373;
+  --color-mps-red-400: #EF5350;
+  --color-mps-red-500: #F44336;
+  --color-mps-red-600: #E53935;
+  --color-mps-red-700: #D32F2F;
+  --color-mps-red-800: #C62828;
+  --color-mps-red-900: #B71C1C;
+  --color-mps-red: #D32F2F;
+
+  --color-mps-blue-50: #E3F2FD;
+  --color-mps-blue-100: #BBDEFB;
+  --color-mps-blue-200: #90CAF9;
+  --color-mps-blue-300: #64B5F6;
+  --color-mps-blue-400: #42A5F5;
+  --color-mps-blue-500: #2196F3;
+  --color-mps-blue-600: #1E88E5;
+  --color-mps-blue-700: #1976D2;
+  --color-mps-blue-800: #1565C0;
+  --color-mps-blue-900: #0D47A1;
+  --color-mps-blue: #1976D2;
+
+  /* HUD Colors */
+  --color-hud-bg: #050505;
+  --color-hud-panel: #0A0F1E;
+  --color-hud-border: rgba(255, 255, 255, 0.1);
+
+  /* Font Families */
+  --font-family-sans: Inter, system-ui, sans-serif;
+  --font-family-mono: "JetBrains Mono", "Courier New", monospace;
+
+  /* Backdrop Blur */
+  --backdrop-blur-glass-sm: 4px;
+  --backdrop-blur-glass: 12px;
+  --backdrop-blur-glass-lg: 24px;
+
+  /* Box Shadows */
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --shadow-glass-red: 0 0 20px rgba(211, 47, 47, 0.5), 0 0 40px rgba(211, 47, 47, 0.3);
+  --shadow-glass-blue: 0 0 20px rgba(25, 118, 210, 0.5), 0 0 40px rgba(25, 118, 210, 0.3);
+
+  /* Animations */
+  --animate-scan-vertical: scan-vertical 4s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes scan-vertical {
+    0% { top: -10%; }
+    100% { top: 110%; }
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+}
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: var(--color-hud-border);
   }
-  
+
   body {
-    @apply bg-hud-bg text-slate-100 antialiased;
+    background-color: var(--color-hud-bg);
+    color: rgb(241 245 249);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 }

@@ -1,18 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
+  basePath: '/MPS-Group',
   reactStrictMode: true,
   images: {
-    domains: ['localhost'],
+    unoptimized: true, // Required for static export
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+    ],
     formats: ['image/avif', 'image/webp'],
   },
   typescript: {
     // Ensures build fails on type errors
     ignoreBuildErrors: false,
   },
-  eslint: {
-    // Ensures build fails on ESLint errors
-    ignoreDuringBuilds: false,
-  },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
