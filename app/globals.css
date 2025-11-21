@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-hud-bg text-slate-100 antialiased;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+}
+
+@layer utilities {
+  /* Glassmorphism utilities */
+  .glass-panel {
+    @apply backdrop-blur-glass bg-hud-panel/60 border border-hud-border shadow-glass;
+  }
+  
+  .glass-hover {
+    @apply transition-all duration-300 hover:border-white/20 hover:bg-hud-panel/80;
+  }
+  
+  /* Industrial textures */
+  .pipe-texture {
+    background-image: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 40px,
+      rgba(0, 0, 0, 0.8) 40px,
+      rgba(0, 0, 0, 0.8) 42px
+    );
+  }
+  
+  .grid-pattern {
+    background-image: linear-gradient(45deg, #1e293b 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
