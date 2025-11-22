@@ -15,7 +15,7 @@ const PIPE_LENGTH = 60; // Spans entire screen width easily
 const LongPipe = ({ position }: { position: [number, number, number] }) => {
   return (
     <mesh position={position} rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
-      <cylinderGeometry args={[PIPE_RADIUS, PIPE_RADIUS, PIPE_LENGTH, 64]} />
+      <cylinderGeometry args={[PIPE_RADIUS, PIPE_RADIUS, PIPE_LENGTH, 32]} />
       <meshStandardMaterial
         color="#050505" // Almost pure black
         metalness={0.95} // Slightly reduced from 1.0 to allow more diffuse interaction
@@ -142,14 +142,15 @@ export default function PipeBackground() {
   return (
     <div className="absolute inset-0 h-full w-full bg-[#050505]">
       <Canvas
-        dpr={[1, 2]}
+        dpr={[1, 2]} // Cap pixel ratio for performance on mobile/retina
+        shadows
+        camera={{ position: [0, 0, 15], fov: 45 }}
         gl={{
-          alpha: true,
-          antialias: true, // Enable AA for smoother edges on large pipes
-          toneMapping: THREE.ReinhardToneMapping,
-          toneMappingExposure: 1.2,
+          antialias: false, // Disable AA since we have post-processing
+          powerPreference: 'high-performance',
+          stencil: false,
+          depth: true,
         }}
-        camera={{ position: [0, 0, 20], fov: 35 }} // Narrower FOV for flatter look
       >
         <SceneContent />
       </Canvas>
