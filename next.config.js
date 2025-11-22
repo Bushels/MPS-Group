@@ -1,10 +1,13 @@
 /** @type {import('next').NextConfig} */
+const isProd = process.env.NODE_ENV === 'production';
+
 const nextConfig = {
-  output: 'export',
-  basePath: '/MPS-Group',
+  // Configure for GitHub Pages deployment (production) vs local development
+  output: isProd ? 'export' : undefined,
+  basePath: isProd ? '/MPS-Group' : undefined,
   reactStrictMode: true,
   images: {
-    unoptimized: true, // Required for static export
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'http',
@@ -14,7 +17,6 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   typescript: {
-    // Ensures build fails on type errors
     ignoreBuildErrors: false,
   },
 };
