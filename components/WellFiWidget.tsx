@@ -9,7 +9,7 @@ export default function WellFiWidget() {
 
   return (
     <button
-      className="group relative flex h-96 w-96 items-center justify-center outline-none"
+      className="group relative flex aspect-square w-full max-w-[24rem] items-center justify-center outline-none"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -37,9 +37,9 @@ export default function WellFiWidget() {
       </div>
 
       {/* --- CORE CONTENT --- */}
-      <div className="relative z-10 flex h-80 w-80 items-center justify-center rounded-full bg-black shadow-2xl transition-transform duration-500 group-hover:scale-110">
+      <div className="relative z-10 flex h-[80%] w-[80%] items-center justify-center rounded-full bg-black shadow-2xl transition-transform duration-500 group-hover:scale-110">
         {/* Logo */}
-        <div className="relative h-64 w-80 transition-all duration-500 group-hover:brightness-125">
+        <div className="relative h-[80%] w-[80%] transition-all duration-500 group-hover:brightness-125">
           <Image
             src="/images/wellfi-logo.png"
             alt="WellFi Logo"
