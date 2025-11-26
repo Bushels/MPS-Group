@@ -1,40 +1,39 @@
 'use client';
 
+import CareerPortal from '@/components/CareerPortal';
+
+import WellFiDashboard from '@/components/WellFiDashboard';
+import WellFiWidget from '@/components/WellFiWidget';
 import { useInView } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
 import {
   Activity,
   Anchor,
   ArrowRight,
-  CheckCircle,
   ChevronRight,
+  Clock,
   Container,
-  Database,
   Facebook,
   Flame,
   GitMerge,
   Instagram,
-  Layers,
   Linkedin,
   Mail,
+  Map,
   MapPin,
   Menu,
   Phone,
+  Printer,
   Scan,
   Settings,
   ShieldCheck,
-  Target,
   Truck,
   Twitter,
-  Users,
-  Wifi,
-  Wrench,
   X,
 } from 'lucide-react';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import AnimatedLogo from '../components/AnimatedLogo';
-import PipeBackground from '../components/PipeBackgroundClient';
 
 // --- HELPER COMPONENTS ---
 
@@ -111,6 +110,61 @@ const StatsWidget = ({ icon: Icon, value, label, unit, color, decimals = 0 }: St
   );
 };
 
+// 3. Holographic Marker for Hero Animation
+const HolographicMarker = ({
+  top,
+  left,
+  label,
+  details = [],
+  delay = 0,
+}: {
+  top: string;
+  left: string;
+  label: string;
+  details?: string[];
+  delay?: number;
+}) => (
+  <div className="absolute z-20" style={{ top, left }}>
+    {/* Float Animation Wrapper */}
+    <div className="relative animate-[float_4s_ease-in-out_infinite]">
+      {/* 1. Target Reticle */}
+      <div className="absolute -top-3 -left-3 h-6 w-6">
+        <div className="absolute inset-0 animate-ping rounded-full bg-red-500/50 opacity-75"></div>
+        <div className="absolute inset-0 animate-[spin-slow_4s_linear_infinite] rounded-full border border-dashed border-red-500"></div>
+        <div className="absolute inset-2 rounded-full bg-red-500"></div>
+      </div>
+
+      {/* 2. Connecting Line */}
+      <div
+        className="absolute top-3 left-3 h-12 w-12 border-t border-l border-red-500/50"
+        style={{ transform: 'skewX(-20deg)' }}
+      ></div>
+
+      {/* 3. Data Card */}
+      <div
+        className="absolute top-8 left-16 w-48 overflow-hidden rounded-sm border-l-2 border-red-500 bg-black/80 p-3 backdrop-blur-md"
+        style={{ animation: `fadeIn 0.5s ease-out ${delay}s backwards` }}
+      >
+        {/* Scanline Effect */}
+        <div className="animate-scan-fast absolute inset-0 z-0 bg-gradient-to-b from-transparent via-red-500/10 to-transparent"></div>
+
+        {/* Content */}
+        <div className="relative z-10">
+          <div className="mb-1 text-[10px] font-bold tracking-widest text-red-500 uppercase">
+            {label}
+          </div>
+          {details.map((detail, i) => (
+            <div key={i} className="flex justify-between font-mono text-[9px] text-slate-300">
+              <span>{detail.split(':')[0]}</span>
+              <span className="text-white">{detail.split(':')[1]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 // --- MAIN PAGE COMPONENT ---
 
 export default function Home() {
@@ -124,7 +178,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#050505] font-sans text-slate-100 selection:bg-red-600/30">
+    <div className="bg-hud-bg relative min-h-screen overflow-x-hidden font-sans text-slate-100 selection:bg-red-600/30">
       {/* --- GLOBAL STYLES (For custom animations not in Tailwind) --- */}
       <style jsx global>{`
         @keyframes scan-vertical {
@@ -134,6 +188,34 @@ export default function Home() {
           100% {
             top: 110%;
           }
+        }
+        @keyframes float {
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+        }
+        @keyframes spin-slow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        @keyframes scan-fast {
+          0% {
+            top: -100%;
+          }
+          100% {
+            top: 200%;
+          }
+        }
+        .animate-scan-fast {
+          animation: scan-fast 2s linear infinite;
         }
         .laser-beam {
           animation: scan-vertical 4s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
@@ -160,7 +242,8 @@ export default function Home() {
           }
         }
         .animate-marquee {
-          animation: marquee 30s linear infinite;
+          animation: marquee 60s linear infinite;
+          will-change: transform;
         }
         @keyframes scan-overlay {
           0% {
@@ -181,16 +264,32 @@ export default function Home() {
         .animate-scan-overlay {
           animation: scan-overlay 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
       `}</style>
 
       {/* --- UTILITY TOP BAR --- */}
       <div className="relative z-50 hidden items-center justify-between border-b border-white/5 bg-[#0a0a0a] px-6 py-2 font-mono text-[10px] tracking-wider text-slate-400 lg:flex">
         <div className="flex items-center gap-6">
           <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
-            <Phone className="h-3 w-3" /> 1-800-MPS-WORK
+            <Phone className="h-3 w-3" /> (780) 594 8100
+          </span>
+          <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
+            <Printer className="h-3 w-3" /> (780) 594 8101
           </span>
           <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
             <Mail className="h-3 w-3" /> info@mpsgroup.ca
+          </span>
+          <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
+            <Clock className="h-3 w-3" /> Mon-Fri: 8am - 5pm
           </span>
           <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
             <MapPin className="h-3 w-3" /> Pierceland, SK (HQ)
@@ -205,7 +304,7 @@ export default function Home() {
 
       {/* --- MAIN NAVIGATION --- */}
       <nav
-        className={`fixed right-0 left-0 z-40 transition-all duration-500 ${scrolled ? 'top-0 border-b border-white/10 bg-[#050505]/90 py-3 backdrop-blur-xl' : 'top-8 bg-transparent py-6'}`}
+        className={`fixed right-0 left-0 z-40 transition-all duration-500 ${scrolled ? 'bg-hud-bg/90 top-0 border-b border-white/10 py-3 backdrop-blur-xl' : 'top-8 bg-transparent py-6'}`}
       >
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6">
           {/* Logo Area */}
@@ -242,119 +341,150 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* --- HERO SECTION: THE YARD --- */}
-      <section className="relative flex h-screen items-center overflow-hidden bg-[#050505]">
-        {' '}
-        {/* Background: Three.js OCTG Pipe with Laser Scan */}
-        <PipeBackground />
-        {/* Shop Image as subtle backdrop (reduced opacity) */}
-        <div className="absolute inset-0 z-10">
-          <div className="absolute inset-0 h-full w-full overflow-hidden">
-            <Image
-              src="/images/shop.png"
-              alt="MPS 136 Acre Facility"
-              fill
-              className="object-cover opacity-10 mix-blend-overlay brightness-50 contrast-125 grayscale"
-              priority
-            />
-          </div>
-          <div className="absolute inset-0 bg-[#050505]/60"></div>
+      {/* --- HERO SECTION --- */}
+      <section className="relative flex min-h-screen flex-col justify-center overflow-hidden pt-20">
+        {/* Background */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/hero-bg.png"
+            alt="MPS Pipe Yard"
+            fill
+            className="object-cover object-center"
+            priority
+            quality={100}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-black/90"></div>
+          <div className="absolute inset-0 bg-[url('/grid.svg')] [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] bg-center opacity-30"></div>
+
+          {/* Holographic Markers */}
+          <HolographicMarker
+            top="20%"
+            left="25%"
+            label="PIPE BATCH #A-492"
+            details={['OD: 7.00"', 'GRADE: L80', 'THREAD: BTC']}
+            delay={1}
+          />
+          <HolographicMarker
+            top="25%"
+            left="55%"
+            label="INSPECTION STATUS"
+            details={['VISUAL: PASS', 'EMI: PASS', 'ULTRASONIC: OK']}
+            delay={1.5}
+          />
+          <HolographicMarker
+            top="15%"
+            left="75%"
+            label="LOGISTICS DATA"
+            details={['DEST: CONKLIN', 'ETA: 24HRS']}
+            delay={2}
+          />
         </div>
-        {/* Hero Content */}
-        <div className="relative z-30 mx-auto grid w-full max-w-[1600px] items-center gap-12 px-6 lg:grid-cols-12">
-          {/* Left: The Value Prop */}
-          <div className="space-y-8 pt-20 lg:col-span-7">
-            <div className="inline-flex animate-pulse items-center gap-3 rounded border border-red-900/50 bg-red-900/20 px-4 py-2 text-xs font-bold tracking-widest text-red-500 uppercase">
-              <Target className="h-4 w-4" /> Limited Capacity Event
+
+        <div className="relative z-10 mx-auto w-full max-w-[1400px] px-6">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            {/* Left Column: Typography & CTA */}
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 rounded border border-red-500/30 bg-red-500/10 px-3 py-1 text-[10px] font-bold tracking-widest text-red-500 uppercase backdrop-blur-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500"></span>
+                </span>
+                System Online
+              </div>
+
+              <h1 className="text-5xl leading-none font-black tracking-tighter text-white md:text-7xl lg:text-8xl">
+                CELEBRATING <br />
+                <span className="bg-linear-to-r from-white via-slate-400 to-slate-600 bg-clip-text text-transparent">
+                  20 YEARS.
+                </span>
+              </h1>
+
+              <p className="max-w-xl text-lg leading-relaxed text-slate-400">
+                136 Acres of industrial capacity. To celebrate our 20th anniversary, we are offering{' '}
+                <span className="font-bold text-white">zero storage fees</span> for new pipe. The
+                future of logistics is transparent.
+              </p>
+
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <a
+                  href="#pipevault-signup"
+                  className="group flex items-center justify-center gap-3 rounded bg-red-700 px-8 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all hover:bg-red-600 hover:shadow-[0_0_20px_rgba(211,47,47,0.4)]"
+                >
+                  Request Storage
+                  <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </a>
+                <a
+                  href="https://maps.app.goo.gl/8vJ8J8J8J8J8J8J8"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center justify-center gap-3 rounded border border-white/10 bg-white/5 px-8 py-4 text-sm font-bold tracking-widest text-white uppercase backdrop-blur-sm transition-all hover:bg-white/10"
+                >
+                  View Facility Map
+                  <Map className="h-4 w-4 text-slate-400 transition-colors group-hover:text-white" />
+                </a>
+              </div>
+              {/* Decorative Elements */}
+              <div className="absolute -top-4 -right-4 -z-10 h-24 w-24 rounded-full bg-blue-500/20 blur-2xl"></div>
+              <div className="absolute -bottom-4 -left-4 -z-10 h-32 w-32 rounded-full bg-red-500/20 blur-3xl"></div>
             </div>
 
-            <h1 className="text-7xl leading-[0.85] font-bold tracking-tighter text-white md:text-9xl">
-              136 ACRES. <br />
-              <span className="text-red-600">$0 STORAGE.</span>
-            </h1>
-
-            <p className="max-w-xl border-l-2 border-red-600 pl-6 text-xl leading-relaxed text-slate-300">
-              Celebrating 20 years of industrial leadership in the Western Canadian Sedimentary
-              Basin.
-              <strong className="mt-2 block text-white">Supply Chain Certainty Starts Here.</strong>
-            </p>
-
-            {/* The Panic Bar - REMOVED and consolidated into Right HUD */}
-          </div>
-
-          {/* Right: PipeVault HUD */}
-          <div className="relative hidden lg:col-span-5 lg:block">
-            <div className="group relative overflow-hidden rounded-xl border border-white/10 bg-black/20 p-1 backdrop-blur-xl transition-all duration-500 hover:bg-black/30 hover:shadow-[0_0_30px_rgba(0,0,0,0.5)] hover:backdrop-blur-2xl">
-              {/* Glass Highlight */}
-              <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-br from-white/5 to-transparent opacity-50"></div>
-
-              {/* Laser Scan Overlay */}
-              <div className="animate-scan-overlay pointer-events-none absolute inset-x-0 z-20 h-32 bg-gradient-to-b from-transparent via-red-500/10 to-transparent mix-blend-overlay">
-                <div className="absolute bottom-0 h-px w-full bg-red-500/50 shadow-[0_0_15px_rgba(220,38,38,0.8)]"></div>
-              </div>
-
-              <div className="relative flex items-center justify-between rounded-t-lg border-b border-white/5 bg-black/20 p-4 backdrop-blur-sm">
-                <div className="flex items-center gap-2 font-mono text-xs text-red-500">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-red-500"></span>
-                  PIPEVAULT™ // LIVE INVENTORY
-                </div>
-                <Database className="h-4 w-4 text-slate-500" />
-              </div>
-
-              <div className="relative overflow-hidden bg-[#0a0f16]/40 p-8 backdrop-blur-sm">
-                <div className="relative z-10 space-y-6">
-                  {/* Header Section */}
-                  <div className="flex items-start gap-4">
-                    <div className="relative flex-shrink-0">
-                      <div className="absolute inset-0 animate-pulse bg-red-600 opacity-20 blur-xl"></div>
-                      <Layers className="relative z-10 h-12 w-12 text-red-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-white">Secure Your Pipe.</h3>
-                      <p className="text-sm text-slate-400">
-                        Real-time tracking. Zero storage fees.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Capacity Meter (Integrated) */}
-                  <div className="space-y-2 rounded-lg border border-white/5 bg-black/20 p-4 backdrop-blur-sm">
-                    <div className="flex items-end justify-between text-[10px] font-bold tracking-widest uppercase">
+            {/* Right Column: HUD */}
+            <div className="relative hidden w-full lg:block">
+              <GlassCard>
+                {/* HUD Content */}
+                <div className="space-y-6 p-6">
+                  {/* Capacity Visualization */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-[10px] font-bold tracking-widest uppercase">
                       <span className="text-slate-400">Yard Capacity</span>
-                      <span className="text-red-500">92% RESERVED</span>
+                      <span className="text-red-500">92% Reserved</span>
                     </div>
-                    <div className="relative flex h-4 gap-0.5 overflow-hidden rounded border border-white/5 bg-slate-950/50 p-0.5">
-                      {Array.from({ length: 30 }).map((_, i) => (
+                    <div className="flex h-2 gap-0.5 overflow-hidden rounded-sm bg-slate-900/50">
+                      {Array.from({ length: 40 }).map((_, i) => (
                         <div
                           key={i}
-                          className={`h-full flex-1 rounded-sm transition-all duration-500 ${
-                            i < 27 ? 'bg-red-700/80 shadow-[0_0_8px_#D32F2F]' : 'bg-slate-800/30'
-                          }`}
+                          className={`h-full flex-1 ${i < 35 ? 'bg-red-600' : 'bg-slate-800'}`}
                         ></div>
                       ))}
                     </div>
-                    <div className="flex items-center gap-2 font-mono text-[10px] text-slate-500">
-                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>3
-                      new racks reserved today
+                  </div>
+
+                  {/* Data Grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded border border-white/5 bg-white/5 p-3">
+                      <div className="text-[10px] text-slate-500 uppercase">Storage Inquiries</div>
+                      <div className="font-mono text-xl font-bold text-white">12</div>
+                    </div>
+                    <div className="rounded border border-white/5 bg-white/5 p-3">
+                      <div className="text-[10px] text-slate-500 uppercase">Active Racks</div>
+                      <div className="font-mono text-xl font-bold text-white">843</div>
                     </div>
                   </div>
 
-                  {/* Unified CTA */}
-                  <button className="group/btn flex w-full items-center justify-center gap-2 rounded bg-blue-700/90 py-4 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-blue-900/30 backdrop-blur-sm transition-all hover:bg-blue-600 hover:shadow-blue-500/50">
-                    Claim Space & View Map{' '}
-                    <ChevronRight className="h-3 w-3 transition-transform group-hover/btn:translate-x-1" />
-                  </button>
+                  {/* System Message */}
+                  <div className="flex items-center gap-3 rounded border border-green-500/20 bg-green-500/10 p-3">
+                    <Scan className="h-4 w-4 animate-pulse text-green-500" />
+                    <span className="font-mono text-xs text-green-400">
+                      20th Anniversary Promo: ACTIVE
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </GlassCard>
+            </div>
 
-              <div className="flex items-center justify-between border-t border-white/10 bg-black/60 p-4 backdrop-blur-md">
-                <span className="text-[10px] tracking-widest text-slate-500 uppercase">
-                  136 Acres Total
-                </span>
-                <div className="flex items-center gap-2">
-                  <Scan className="h-3 w-3 text-red-500" />
-                  <span className="text-xs font-bold text-white">Scanning Inventory...</span>
+            {/* Mobile Only Status Bar */}
+            <div className="lg:hidden">
+              <div className="flex items-center justify-between rounded border border-white/10 bg-white/5 p-4 backdrop-blur-md">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div className="absolute inset-0 animate-ping rounded-full bg-green-500 opacity-75"></div>
+                    <div className="relative h-2 w-2 rounded-full bg-green-500"></div>
+                  </div>
+                  <span className="text-xs font-bold tracking-widest text-white uppercase">
+                    Yard Status: Active
+                  </span>
                 </div>
+                <span className="font-mono text-xs text-slate-400">92% Full</span>
               </div>
             </div>
           </div>
@@ -384,15 +514,23 @@ export default function Home() {
 
       {/* --- PARTNER MARQUEE --- */}
       <section className="relative overflow-hidden border-b border-white/5 bg-[#0a0a0a] py-16">
-        <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-r from-[#0a0a0a] via-transparent to-[#0a0a0a]"></div>
-        <div className="mx-auto mb-8 max-w-[1400px] px-6 text-center">
+        <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-r from-[#0a0a0a] via-transparent to-[#0a0a0a]"></div>
+        <div className="relative z-20 mx-auto mb-8 max-w-[1400px] px-6 text-center">
           <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">
             Trusted By Industry Leaders
           </p>
         </div>
 
-        <div className="animate-marquee flex min-w-full items-center gap-24 px-12">
+        <div className="animate-marquee flex w-max items-center gap-12 px-4 md:gap-24 md:px-12">
           {[
+            { name: 'Cenovus', logo: '/images/partners/cenovus.png' },
+            { name: 'Canadian Natural', logo: '/images/partners/cnrl.png' },
+            { name: 'Strathcona', logo: '/images/partners/strathcona.png' },
+            { name: 'Imperial', logo: '/images/partners/imperial.png' },
+            { name: 'Cenovus', logo: '/images/partners/cenovus.png' },
+            { name: 'Canadian Natural', logo: '/images/partners/cnrl.png' },
+            { name: 'Strathcona', logo: '/images/partners/strathcona.png' },
+            { name: 'Imperial', logo: '/images/partners/imperial.png' },
             { name: 'Cenovus', logo: '/images/partners/cenovus.png' },
             { name: 'Canadian Natural', logo: '/images/partners/cnrl.png' },
             { name: 'Strathcona', logo: '/images/partners/strathcona.png' },
@@ -404,7 +542,7 @@ export default function Home() {
           ].map((partner, i) => (
             <div
               key={i}
-              className="relative h-12 w-48 opacity-50 grayscale transition-all duration-500 hover:scale-110 hover:opacity-100 hover:grayscale-0"
+              className="relative h-12 w-32 opacity-50 grayscale transition-all duration-500 hover:scale-110 hover:opacity-100 hover:grayscale-0 md:h-12 md:w-48"
             >
               <Image src={partner.logo} alt={partner.name} fill className="object-contain" />
             </div>
@@ -431,281 +569,198 @@ export default function Home() {
           {/* Service Grid */}
           <div className="mb-12 grid gap-6 md:grid-cols-2">
             {/* Fabrication */}
-            <GlassCard className="group cursor-pointer transition-all hover:bg-white/5">
-              <div className="mb-6 flex items-start justify-between">
-                <div className="w-fit rounded-lg bg-red-900/10 p-4 text-red-600 transition-colors group-hover:bg-red-600 group-hover:text-white">
-                  <Flame className="h-8 w-8" />
-                </div>
-                <div className="flex items-center gap-2 rounded border border-white/10 bg-black/40 px-3 py-1.5 backdrop-blur-md">
-                  <Activity className="h-3 w-3 text-green-500" />
-                  <div className="flex flex-col text-right">
-                    <span className="mb-0.5 text-[9px] leading-none tracking-widest text-slate-500 uppercase">
-                      Shop Load
-                    </span>
-                    <span className="text-[10px] leading-none font-bold text-white">
-                      84% OPTIMAL
-                    </span>
+            <GlassCard className="group cursor-pointer transition-all hover:border-red-500/30 hover:bg-white/5">
+              {/* Background Image with Overlay */}
+              <div className="absolute inset-0 z-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100">
+                <Image
+                  src="/images/fabrication-bg.jpg"
+                  alt="Fabrication"
+                  fill
+                  className="object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-[#0A0F1E] via-[#0A0F1E]/80 to-[#0A0F1E]/40"></div>
+              </div>
+
+              {/* Content */}
+              <div className="relative z-10">
+                <div className="mb-6 flex items-start justify-between">
+                  <div className="w-fit rounded-lg bg-red-900/10 p-4 text-red-600 transition-colors group-hover:bg-red-600 group-hover:text-white">
+                    <Flame className="h-8 w-8" />
+                  </div>
+                  <div className="flex items-center gap-2 rounded border border-white/10 bg-black/40 px-3 py-1.5 backdrop-blur-md">
+                    <Activity className="h-3 w-3 text-green-500" />
+                    <div className="flex flex-col text-right">
+                      <span className="mb-0.5 text-[9px] leading-none tracking-widest text-slate-500 uppercase">
+                        Shop Load
+                      </span>
+                      <span className="text-[10px] leading-none font-bold text-white">
+                        84% OPTIMAL
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <h3 className="mb-2 text-2xl font-bold text-white">Fabrication</h3>
-              <p className="mb-6 text-sm leading-relaxed text-slate-400">
-                Large-scale structural steel processing with PythonX robotics. CWB Division 2
-                Certified.
-              </p>
-              <div className="flex items-center gap-2 text-sm font-bold text-red-500 transition-transform group-hover:translate-x-2">
-                View Capacity <ArrowRight className="h-4 w-4" />
+                <h3 className="mb-2 text-2xl font-bold text-white">Fabrication</h3>
+                <p className="mb-6 text-sm leading-relaxed text-slate-400 transition-colors group-hover:text-slate-200">
+                  Large-scale structural steel processing with PythonX robotics. CWB Division 2
+                  Certified.
+                </p>
+                <div className="flex items-center gap-2 text-sm font-bold text-red-500 transition-transform group-hover:translate-x-2">
+                  View Capacity <ArrowRight className="h-4 w-4" />
+                </div>
               </div>
             </GlassCard>
 
             {/* Modular */}
-            <GlassCard className="group cursor-pointer transition-all hover:bg-white/5">
-              <div className="mb-6 w-fit rounded-lg bg-blue-900/10 p-4 text-blue-500 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                <Container className="h-8 w-8" />
+            <GlassCard className="group cursor-pointer transition-all hover:border-blue-500/30 hover:bg-white/5">
+              {/* Background Image with Overlay */}
+              <div className="absolute inset-0 z-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100">
+                <Image
+                  src="/images/modular-bg.jpg"
+                  alt="Modular Assembly"
+                  fill
+                  className="object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-[#0A0F1E] via-[#0A0F1E]/80 to-[#0A0F1E]/40"></div>
               </div>
-              <h3 className="mb-2 text-2xl font-bold text-white">Modular Assembly</h3>
-              <p className="mb-6 text-sm leading-relaxed text-slate-400">
-                100-acre assembly yard for mega-modules. Full logistics and load-out support.
-              </p>
-              <div className="flex items-center gap-2 text-sm font-bold text-blue-500 transition-transform group-hover:translate-x-2">
-                View Yard Specs <ArrowRight className="h-4 w-4" />
+
+              {/* Content */}
+              <div className="relative z-10">
+                <div className="mb-6 w-fit rounded-lg bg-blue-900/10 p-4 text-blue-500 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+                  <Container className="h-8 w-8" />
+                </div>
+                <h3 className="mb-2 text-2xl font-bold text-white">Modular Assembly</h3>
+                <p className="mb-6 text-sm leading-relaxed text-slate-400 transition-colors group-hover:text-slate-200">
+                  100-acre assembly yard for mega-modules. Full logistics and load-out support.
+                </p>
+                <div className="flex items-center gap-2 text-sm font-bold text-blue-500 transition-transform group-hover:translate-x-2">
+                  View Yard Specs <ArrowRight className="h-4 w-4" />
+                </div>
               </div>
             </GlassCard>
 
             {/* Pipefitting */}
-            <GlassCard className="group cursor-pointer transition-all hover:bg-white/5">
-              <div className="mb-6 w-fit rounded-lg bg-blue-900/10 p-4 text-blue-500 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                <GitMerge className="h-8 w-8" />
+            <GlassCard className="group cursor-pointer transition-all hover:border-blue-500/30 hover:bg-white/5">
+              {/* Background Image with Overlay */}
+              <div className="absolute inset-0 z-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100">
+                <Image
+                  src="/images/pipefitting-bg.jpg"
+                  alt="Pipefitting"
+                  fill
+                  className="object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-[#0A0F1E] via-[#0A0F1E]/80 to-[#0A0F1E]/40"></div>
               </div>
-              <h3 className="mb-2 text-2xl font-bold text-white">Pipefitting</h3>
-              <p className="mb-6 text-sm leading-relaxed text-slate-400">
-                ABSA certified pressure piping. Field installation and facility tie-ins.
-              </p>
-              <div className="flex items-center gap-2 text-sm font-bold text-blue-500 transition-transform group-hover:translate-x-2">
-                View Certs <ArrowRight className="h-4 w-4" />
+
+              {/* Content */}
+              <div className="relative z-10">
+                <div className="mb-6 w-fit rounded-lg bg-blue-900/10 p-4 text-blue-500 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+                  <GitMerge className="h-8 w-8" />
+                </div>
+                <h3 className="mb-2 text-2xl font-bold text-white">Pipefitting</h3>
+                <p className="mb-6 text-sm leading-relaxed text-slate-400 transition-colors group-hover:text-slate-200">
+                  ABSA certified pressure piping. Field installation and facility tie-ins.
+                </p>
+                <div className="flex items-center gap-2 text-sm font-bold text-blue-500 transition-transform group-hover:translate-x-2">
+                  View Certs <ArrowRight className="h-4 w-4" />
+                </div>
               </div>
             </GlassCard>
 
             {/* Machining */}
-            <GlassCard className="group cursor-pointer transition-all hover:bg-white/5">
-              <div className="mb-6 w-fit rounded-lg bg-blue-900/10 p-4 text-blue-500 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                <Settings className="h-8 w-8" />
+            <GlassCard className="group cursor-pointer transition-all hover:border-blue-500/30 hover:bg-white/5">
+              {/* Background Image with Overlay */}
+              <div className="absolute inset-0 z-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100">
+                <Image
+                  src="/images/machining-bg.jpg"
+                  alt="Machining"
+                  fill
+                  className="object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-[#0A0F1E] via-[#0A0F1E]/80 to-[#0A0F1E]/40"></div>
               </div>
-              <h3 className="mb-2 text-2xl font-bold text-white">Machining</h3>
-              <p className="mb-6 text-sm leading-relaxed text-slate-400">
-                Precision CNC machining for custom components, flange facing, and repair.
-              </p>
-              <div className="flex items-center gap-2 text-sm font-bold text-blue-500 transition-transform group-hover:translate-x-2">
-                View Capabilities <ArrowRight className="h-4 w-4" />
+
+              {/* Content */}
+              <div className="relative z-10">
+                <div className="mb-6 w-fit rounded-lg bg-blue-900/10 p-4 text-blue-500 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+                  <Settings className="h-8 w-8" />
+                </div>
+                <h3 className="mb-2 text-2xl font-bold text-white">Machining</h3>
+                <p className="mb-6 text-sm leading-relaxed text-slate-400 transition-colors group-hover:text-slate-200">
+                  Precision CNC machining for custom components, flange facing, and repair.
+                </p>
+                <div className="flex items-center gap-2 text-sm font-bold text-blue-500 transition-transform group-hover:translate-x-2">
+                  View Capabilities <ArrowRight className="h-4 w-4" />
+                </div>
               </div>
             </GlassCard>
           </div>
 
-          {/* Innovation Wing (Downhole) - V2 Telemetry Design */}
-          <div
-            id="products"
-            className="group relative w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0F172A]"
-          >
-            {/* Animated Grid Background */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear_gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A] via-transparent to-[#0F172A]"></div>
-
-            <div className="relative z-10 grid lg:grid-cols-12">
-              {/* Left: Brand & Context */}
-              <div className="relative border-r border-white/5 p-6 lg:col-span-5 lg:p-12">
-                <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-[10px] font-bold tracking-widest text-blue-400 uppercase">
-                  <Wifi className="h-3 w-3" /> Live Telemetry
-                </div>
-
-                <h3 className="mb-2 text-4xl font-black tracking-tighter text-white lg:text-6xl">
-                  WELL<span className="text-red-600">FI</span>
-                </h3>
-                <p className="mb-8 font-mono text-xs tracking-widest text-slate-500 uppercase">
-                  Downhole Intelligence System
-                </p>
-
-                <p className="mb-8 text-lg leading-relaxed text-slate-300">
-                  The industry's first <span className="font-bold text-white">zero-cable</span> data
-                  transmission tool. Receive pressure, temperature, and vibration data in real-time.
-                </p>
-
-                <button className="group flex w-full items-center justify-between rounded border border-white/10 bg-white/5 px-6 py-4 transition-all hover:bg-white/10">
-                  <span className="text-xs font-bold tracking-widest text-white uppercase">
-                    View Tech Specs
-                  </span>
-                  <ArrowRight className="h-4 w-4 text-slate-400 transition-transform group-hover:translate-x-1" />
-                </button>
+          {/* --- CERTIFICATIONS & COMPLIANCE --- */}
+          <div className="mt-20 border-t border-white/5 pt-20">
+            <div className="mb-12 text-center">
+              <h2 className="mb-8 text-xs font-bold tracking-widest text-slate-500 uppercase">
+                Certifications & Compliance
+              </h2>
+              <div className="flex flex-wrap justify-center gap-12 opacity-60 grayscale transition-all duration-500 hover:opacity-100 hover:grayscale-0">
+                {[
+                  { name: 'ACSA', logo: '/images/certifications/acsa.png' },
+                  { name: 'ComplyWorks', logo: '/images/certifications/complyworks.png' },
+                  { name: 'CQN', logo: '/images/certifications/cqn.jpg' },
+                  { name: 'ISN', logo: '/images/certifications/isn.png' },
+                ].map((cert) => (
+                  <div key={cert.name} className="relative h-16 w-32">
+                    <Image src={cert.logo} alt={cert.name} fill className="object-contain" />
+                  </div>
+                ))}
               </div>
+            </div>
+          </div>
 
-              {/* Right: Live Dashboard UI */}
-              <div className="relative bg-black/20 p-6 lg:col-span-7 lg:p-12">
-                {/* Dashboard Header */}
-                <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <span className="relative flex h-3 w-3">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
-                      </span>
-                      <span className="font-mono text-xs font-bold text-green-500">
-                        SYSTEM ACTIVE
-                      </span>
-                    </div>
-                    <div className="h-4 w-px bg-white/10"></div>
-                    <span className="font-mono text-xs text-slate-500">ID: WF-8829-X</span>
-                  </div>
-                  <div className="font-mono text-xl font-bold text-white">
-                    131 <span className="text-xs font-normal text-slate-500">UNITS DEPLOYED</span>
-                  </div>
-                </div>
+          {/* --- DOWNHOLE TECHNOLOGIES --- */}
+          <div className="mt-32 mb-12 flex items-end justify-between border-t border-white/5 pt-20">
+            <div>
+              <h2 className="mb-4 text-4xl font-bold text-white">Downhole Technologies</h2>
+              <p className="max-w-xl text-slate-400">
+                Advanced telemetry and wireless monitoring solutions for the modern wellbore.
+              </p>
+            </div>
+          </div>
 
-                {/* Data Grid */}
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {/* Depth */}
-                  <div className="relative overflow-hidden rounded-lg border border-white/10 bg-white/5 p-4">
-                    <div className="mb-2 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
-                      Depth (MD)
-                    </div>
-                    <div className="font-mono text-2xl text-white">
-                      3,450<span className="text-sm text-slate-500">m</span>
-                    </div>
-                    <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
-                      <div className="h-full w-[75%] bg-blue-500"></div>
-                    </div>
-                  </div>
-
-                  {/* Temperature */}
-                  <div className="relative overflow-hidden rounded-lg border border-white/10 bg-white/5 p-4">
-                    <div className="mb-2 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
-                      BHT
-                    </div>
-                    <div className="font-mono text-2xl text-white">
-                      142<span className="text-sm text-slate-500">°C</span>
-                    </div>
-                    <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
-                      <div className="h-full w-[60%] bg-red-500"></div>
-                    </div>
-                  </div>
-
-                  {/* Pressure */}
-                  <div className="relative overflow-hidden rounded-lg border border-white/10 bg-white/5 p-4">
-                    <div className="mb-2 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
-                      Annulus
-                    </div>
-                    <div className="font-mono text-2xl text-white">
-                      42.5<span className="text-sm text-slate-500">MPa</span>
-                    </div>
-                    <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
-                      <div className="h-full w-[85%] bg-yellow-500"></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Live Feed Visualization */}
-                <div className="mt-4 rounded-lg border border-white/10 bg-black/40 p-4 font-mono text-[10px] text-green-500/80">
-                  <div className="mb-2 flex justify-between text-slate-600">
-                    <span>PACKET_STREAM</span>
-                    <span>128kbps</span>
-                  </div>
-                  <div className="space-y-1 opacity-70">
-                    <div className="truncate">RX: [00101101] TEMP_WARN_LIMIT_OK ... SYNC</div>
-                    <div className="truncate">RX: [00101110] VIB_AXIS_Z: 0.04g ... STABLE</div>
-                    <div className="truncate">TX: [11001001] PULSE_MOD_ACK ... SENT</div>
-                  </div>
-                </div>
+          <div className="grid gap-12 lg:grid-cols-12">
+            {/* Left: Content */}
+            <div className="lg:col-span-5">
+              <div className="mb-12 flex justify-center lg:justify-start">
+                <WellFiWidget />
               </div>
+              <p className="mb-8 font-mono text-xs tracking-widest text-slate-500 uppercase">
+                Wireless Downhole Intelligence
+              </p>
+
+              <p className="mb-8 text-lg leading-relaxed text-slate-300">
+                Real-time telemetry for critical operations. Transmitting{' '}
+                <span className="font-bold text-white">Downhole Temperature</span> and{' '}
+                <span className="font-bold text-white">Pressure</span> data instantly, no strings
+                attached.
+              </p>
+
+              <button className="group flex w-full items-center justify-between rounded border border-white/10 bg-white/5 px-6 py-4 transition-all hover:bg-white/10">
+                <span className="text-xs font-bold tracking-widest text-white uppercase">
+                  View Tech Specs
+                </span>
+                <ArrowRight className="h-4 w-4 text-slate-400 transition-transform group-hover:translate-x-1" />
+              </button>
+            </div>
+
+            {/* Right: Live Dashboard UI */}
+            <div className="lg:col-span-7">
+              <WellFiDashboard />
             </div>
           </div>
         </div>
       </section>
 
       {/* --- CAREERS SECTION --- */}
-      <section
-        id="careers"
-        className="relative overflow-hidden border-y border-white/5 bg-[#0a0f16] px-6 py-32"
-      >
-        <div className="relative z-10 mx-auto grid max-w-[1400px] items-center gap-20 lg:grid-cols-2">
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 text-xs font-bold tracking-widest text-blue-500 uppercase">
-              <Users className="h-4 w-4" /> Careers at MPS
-            </div>
-            <h2 className="mb-6 text-5xl leading-tight font-bold text-white">
-              BUILD YOUR <br /> <span className="text-red-600">LEGACY.</span>
-            </h2>
-            <p className="mb-10 max-w-lg text-lg leading-relaxed text-slate-400">
-              MPS Group isn&apos;t just a job; it&apos;s a proving ground. We are looking for
-              industrial athletes who thrive in high-stakes environments.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              {['Competitive Rates', 'Long-Term Contracts', 'Advanced Training'].map((perk) => (
-                <div
-                  key={perk}
-                  className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 font-mono text-xs text-slate-300"
-                >
-                  <CheckCircle className="h-3 w-3 text-green-500" /> {perk}
-                </div>
-              ))}
-            </div>
-          </div>
-          <GlassCard className="relative border-white/10 bg-[#050505]/80 backdrop-blur-xl">
-            <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-6">
-              <div>
-                <h3 className="text-xl font-bold text-white">Priority Openings</h3>
-                <p className="mt-1 text-xs tracking-widest text-slate-500 uppercase">
-                  Pierceland & Field Operations
-                </p>
-              </div>
-              <div className="animate-pulse rounded border border-green-500/20 bg-green-500/10 px-3 py-1 text-[10px] font-bold tracking-widest text-green-500 uppercase">
-                Hiring Active
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div className="group flex cursor-pointer items-center justify-between rounded-lg border border-transparent p-4 transition-all hover:border-white/5 hover:bg-white/5">
-                <div className="flex items-center gap-4">
-                  <div className="rounded bg-red-900/10 p-2 text-red-600">
-                    <Flame className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-white group-hover:text-red-500">
-                      B-Pressure Welder
-                    </div>
-                    <div className="text-[10px] text-slate-500 uppercase">Shop & Field</div>
-                  </div>
-                </div>
-                <ArrowRight className="h-4 w-4 text-slate-600 group-hover:text-white" />
-              </div>
-              <div className="group flex cursor-pointer items-center justify-between rounded-lg border border-transparent p-4 transition-all hover:border-white/5 hover:bg-white/5">
-                <div className="flex items-center gap-4">
-                  <div className="rounded bg-blue-900/10 p-2 text-blue-500">
-                    <Wrench className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-white group-hover:text-blue-500">
-                      Journeyman Pipefitter
-                    </div>
-                    <div className="text-[10px] text-slate-500 uppercase">Pierceland Yard</div>
-                  </div>
-                </div>
-                <ArrowRight className="h-4 w-4 text-slate-600 group-hover:text-white" />
-              </div>
-              <div className="group flex cursor-pointer items-center justify-between rounded-lg border border-transparent p-4 transition-all hover:border-white/5 hover:bg-white/5">
-                <div className="flex items-center gap-4">
-                  <div className="rounded bg-green-900/10 p-2 text-green-500">
-                    <ShieldCheck className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-white group-hover:text-green-500">
-                      QC Inspector
-                    </div>
-                    <div className="text-[10px] text-slate-500 uppercase">Fabrication Shop</div>
-                  </div>
-                </div>
-                <ArrowRight className="h-4 w-4 text-slate-600 group-hover:text-white" />
-              </div>
-            </div>
-          </GlassCard>
-        </div>
-      </section>
+      <CareerPortal />
 
       {/* --- FOOTER --- */}
       <footer className="relative z-10 border-t border-white/10 bg-black px-6 pt-20 pb-10">
