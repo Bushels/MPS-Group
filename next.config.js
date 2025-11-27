@@ -1,11 +1,5 @@
 /** @type {import('next').NextConfig} */
-const isProd = process.env.NODE_ENV === 'production';
-const isVercel = process.env.VERCEL === '1';
-
 const nextConfig = {
-  // Configure for GitHub Pages deployment (production) vs local development
-  output: isProd ? 'export' : undefined,
-  basePath: isProd && !isVercel ? '/MPS-Group' : undefined,
   reactStrictMode: true,
   images: {
     unoptimized: true,
@@ -14,11 +8,33 @@ const nextConfig = {
         protocol: 'http',
         hostname: 'localhost',
       },
+      {
+        protocol: 'https',
+        hostname: '*.wix.com',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },
   typescript: {
     ignoreBuildErrors: false,
+  },
+  // Allow iframe embedding from anywhere (Wix, custom domains, etc.)
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors *",
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+        ],
+      },
+    ];
   },
 };
 
