@@ -321,7 +321,7 @@ function HomeContent() {
 
             {/* Main Links */}
             <div className="hidden items-center gap-10 lg:flex">
-              {['Services', 'Products', 'Careers', 'About'].map((item) => (
+              {['Services', 'Products', 'Careers'].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
