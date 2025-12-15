@@ -412,13 +412,22 @@ function HomeContent() {
 
               <p className="max-w-xl text-lg leading-relaxed text-slate-400">
                 136 Acres of industrial capacity. To celebrate our 20th anniversary, we are offering{' '}
-                <span className="font-bold text-white">zero storage fees</span> for new pipe. The
-                future of logistics is transparent.
+                <a
+                  href="https://www.mpsgroup.ca/pipevault"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold text-white transition-colors hover:text-red-500"
+                >
+                  zero storage fees
+                </a>{' '}
+                for new pipe. The future of logistics is transparent.
               </p>
 
               <div className="flex flex-col gap-4 sm:flex-row">
                 <a
-                  href="#pipevault-signup"
+                  href="https://www.mpsgroup.ca/pipevault"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group flex items-center justify-center gap-3 rounded bg-red-700 px-8 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all hover:bg-red-600 hover:shadow-[0_0_20px_rgba(211,47,47,0.4)]"
                 >
                   Request Storage

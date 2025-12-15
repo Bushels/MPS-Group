@@ -45,14 +45,25 @@ type JobCategory =
 // Jobs data synced with Wix hiring system
 const JOBS: Job[] = [
   {
-    id: 'b-pressure-welder',
-    title: 'B-Pressure Welder',
+    id: 'cwb-welder',
+    title: 'CWB Welder',
     category: 'Welding',
-    location: 'Shop & Field',
+    location: 'Pierceland',
     type: 'Full-time',
     urgency: 'high',
-    description: 'CWB certified B-Pressure welding for structural and pressure piping projects.',
-    requirements: ['B-Pressure ticket', 'CWB certification', 'FCAW/SMAW experience'],
+    description: 'Structural and general welding with CWB Division 2 certification.',
+    requirements: ['CWB Division 2', 'Multi-process capability', 'Overhead/vertical welding'],
+  },
+  {
+    id: 'labourer',
+    title: 'General Labourer',
+    category: 'General Labour',
+    location: 'Various',
+    type: 'Full-time',
+    urgency: 'high',
+    description:
+      'Support fabrication and construction activities. No previous experience required but preferred.',
+    requirements: ['Physical fitness', 'Safety oriented', 'Team player'],
   },
   {
     id: 'journeyman-pipefitter',
@@ -65,24 +76,24 @@ const JOBS: Job[] = [
     requirements: ['Journeyman ticket', 'ABSA experience', 'Blueprint reading'],
   },
   {
+    id: 'b-pressure-welder',
+    title: 'B-Pressure Welder',
+    category: 'Welding',
+    location: 'Shop & Field',
+    type: 'Full-time',
+    urgency: 'high',
+    description: 'CWB certified B-Pressure welding for structural and pressure piping projects.',
+    requirements: ['B-Pressure ticket', 'CWB certification', 'FCAW/SMAW experience'],
+  },
+  {
     id: 'qc-inspector',
     title: 'QC Inspector',
     category: 'QA/QC',
     location: 'Fabrication Shop',
     type: 'Full-time',
-    urgency: 'high',
+    urgency: 'medium',
     description: 'Quality control inspection for fabrication projects.',
     requirements: ['QC certification', 'Welding inspection experience', 'Documentation skills'],
-  },
-  {
-    id: 'cwb-welder',
-    title: 'CWB Welder',
-    category: 'Welding',
-    location: 'Pierceland',
-    type: 'Full-time',
-    urgency: 'medium',
-    description: 'Structural and general welding with CWB Division 2 certification.',
-    requirements: ['CWB Division 2', 'Multi-process capability', 'Overhead/vertical welding'],
   },
   {
     id: 'tig-welder',
@@ -185,16 +196,6 @@ const JOBS: Job[] = [
     requirements: ['Trade background', 'Supervisory experience', 'Production planning'],
   },
   {
-    id: 'labourer',
-    title: 'General Labourer',
-    category: 'General Labour',
-    location: 'Various',
-    type: 'Full-time',
-    urgency: 'normal',
-    description: 'Support fabrication and construction activities.',
-    requirements: ['Physical fitness', 'Safety oriented', 'Team player'],
-  },
-  {
     id: 'administrator',
     title: 'Administrator',
     category: 'Administration',
@@ -236,7 +237,11 @@ const CATEGORY_COLORS: Record<JobCategory, { bg: string; text: string; border: s
   'QA/QC': { bg: 'bg-green-500/10', text: 'text-green-500', border: 'border-green-500/30' },
   Management: { bg: 'bg-purple-500/10', text: 'text-purple-500', border: 'border-purple-500/30' },
   Administration: { bg: 'bg-cyan-500/10', text: 'text-cyan-500', border: 'border-cyan-500/30' },
-  'General Labour': { bg: 'bg-slate-500/10', text: 'text-slate-400', border: 'border-slate-500/30' },
+  'General Labour': {
+    bg: 'bg-slate-500/10',
+    text: 'text-slate-400',
+    border: 'border-slate-500/30',
+  },
 };
 
 // Wix application portal URL
@@ -271,12 +276,12 @@ export default function CareerPortal() {
     <section id="careers" className="relative overflow-hidden bg-[#060a12] px-6 py-32">
       {/* Animated Background Grid */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(20,30,48,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(20,30,48,0.5)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,black_70%,transparent_100%)]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(20,30,48,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(20,30,48,0.5)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,black_70%,transparent_100%)] bg-[size:50px_50px]"></div>
       </div>
 
       {/* Glowing Orbs */}
       <div className="pointer-events-none absolute top-0 left-1/4 h-96 w-96 -translate-y-1/2 rounded-full bg-red-600/10 blur-3xl"></div>
-      <div className="pointer-events-none absolute bottom-0 right-1/4 h-96 w-96 translate-y-1/2 rounded-full bg-blue-600/10 blur-3xl"></div>
+      <div className="pointer-events-none absolute right-1/4 bottom-0 h-96 w-96 translate-y-1/2 rounded-full bg-blue-600/10 blur-3xl"></div>
 
       <div className="relative z-10 mx-auto max-w-[1400px]">
         {/* Header */}
@@ -292,8 +297,9 @@ export default function CareerPortal() {
               </span>
             </h2>
             <p className="mb-8 max-w-lg text-lg leading-relaxed text-slate-400">
-              MPS Group isn&apos;t just a job; it&apos;s a proving ground. We are looking for
-              industrial athletes who thrive in high-stakes environments.
+              Join Western Canada's premier industrial team. At MPS Group, we offer more than
+              competitive wages—we provide a culture of excellence, long-term growth, and a
+              commitment to your safety and success.
             </p>
 
             {/* Benefits */}
@@ -343,7 +349,9 @@ export default function CareerPortal() {
                   </div>
                 </div>
                 <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-center">
-                  <div className="mb-1 font-mono text-3xl font-bold text-red-500">{urgentCount}</div>
+                  <div className="mb-1 font-mono text-3xl font-bold text-red-500">
+                    {urgentCount}
+                  </div>
                   <div className="text-[10px] tracking-widest text-red-400/80 uppercase">
                     Priority Hires
                   </div>
@@ -370,7 +378,7 @@ export default function CareerPortal() {
                 placeholder="Search positions, skills, or locations..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-white/5 py-4 pr-4 pl-12 text-white placeholder-slate-500 outline-none transition-all focus:border-red-500/50 focus:bg-white/10"
+                className="w-full rounded-lg border border-white/10 bg-white/5 py-4 pr-4 pl-12 text-white placeholder-slate-500 transition-all outline-none focus:border-red-500/50 focus:bg-white/10"
               />
             </div>
             <button
