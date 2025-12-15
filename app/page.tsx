@@ -32,7 +32,8 @@ import {
   X,
 } from 'lucide-react';
 import Image from 'next/image';
-import React, { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import AnimatedLogo from '../components/AnimatedLogo';
 
 // --- HELPER COMPONENTS ---
@@ -167,7 +168,10 @@ const HolographicMarker = ({
 
 // --- MAIN PAGE COMPONENT ---
 
-export default function Home() {
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const isEmbedded = searchParams.get('embed') === 'true';
+
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -277,72 +281,79 @@ export default function Home() {
       `}</style>
 
       {/* --- UTILITY TOP BAR --- */}
-      <div className="relative z-50 hidden items-center justify-between border-b border-white/5 bg-[#0a0a0a] px-6 py-2 font-mono text-[10px] tracking-wider text-slate-400 lg:flex">
-        <div className="flex items-center gap-6">
-          <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
-            <Phone className="h-3 w-3" /> (780) 594 8100
-          </span>
-          <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
-            <Printer className="h-3 w-3" /> (780) 594 8101
-          </span>
-          <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
-            <Mail className="h-3 w-3" /> info@mpsgroup.ca
-          </span>
-          <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
-            <Clock className="h-3 w-3" /> Mon-Fri: 8am - 5pm
-          </span>
-          <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
-            <MapPin className="h-3 w-3" /> Pierceland, SK (HQ)
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="flex items-center gap-2 transition-colors hover:text-red-600">
-            <ShieldCheck className="h-3 w-3" /> CLIENT PORTAL LOGIN
-          </button>
-        </div>
-      </div>
-
-      {/* --- MAIN NAVIGATION --- */}
-      <nav
-        className={`fixed right-0 left-0 z-40 transition-all duration-500 ${scrolled ? 'bg-hud-bg/90 top-0 border-b border-white/10 py-3 backdrop-blur-xl' : 'top-8 bg-transparent py-6'}`}
-      >
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6">
-          {/* Logo Area */}
-          <div className="group flex cursor-pointer items-center gap-3">
-            <AnimatedLogo />
+      {!isEmbedded && (
+        <div className="relative z-50 hidden items-center justify-between border-b border-white/5 bg-[#0a0a0a] px-6 py-2 font-mono text-[10px] tracking-wider text-slate-400 lg:flex">
+          <div className="flex items-center gap-6">
+            <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
+              <Phone className="h-3 w-3" /> (780) 594 8100
+            </span>
+            <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
+              <Printer className="h-3 w-3" /> (780) 594 8101
+            </span>
+            <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
+              <Mail className="h-3 w-3" /> info@mpsgroup.ca
+            </span>
+            <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
+              <Clock className="h-3 w-3" /> Mon-Fri: 8am - 5pm
+            </span>
+            <span className="flex cursor-pointer items-center gap-2 transition-colors hover:text-white">
+              <MapPin className="h-3 w-3" /> Pierceland, SK (HQ)
+            </span>
           </div>
-
-          {/* Main Links */}
-          <div className="hidden items-center gap-10 lg:flex">
-            {['Services', 'Products', 'Careers', 'About'].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="text-xs font-bold tracking-widest text-slate-300 uppercase transition-colors hover:text-red-600"
-              >
-                {item}
-              </a>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <div className="hidden items-center gap-6 lg:flex">
-            <button className="rounded bg-red-700 px-6 py-3 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-red-900/20 transition-all hover:bg-red-800">
-              Contact Us
+          <div className="flex items-center gap-4">
+            <button className="flex items-center gap-2 transition-colors hover:text-red-600">
+              <ShieldCheck className="h-3 w-3" /> CLIENT PORTAL LOGIN
             </button>
           </div>
-
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-white lg:hidden"
-          >
-            {mobileMenuOpen ? <X /> : <Menu />}
-          </button>
         </div>
-      </nav>
+      )}
+
+      {/* --- MAIN NAVIGATION --- */}
+      {!isEmbedded && (
+        <nav
+          className={`fixed right-0 left-0 z-40 transition-all duration-500 ${scrolled ? 'bg-hud-bg/90 top-0 border-b border-white/10 py-3 backdrop-blur-xl' : 'top-8 bg-transparent py-6'}`}
+        >
+          <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6">
+            {/* Logo Area */}
+            <div className="group flex cursor-pointer items-center gap-3">
+              <AnimatedLogo />
+            </div>
+
+            {/* Main Links */}
+            <div className="hidden items-center gap-10 lg:flex">
+              {['Services', 'Products', 'Careers', 'About'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  className="text-xs font-bold tracking-widest text-slate-300 uppercase transition-colors hover:text-red-600"
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div className="hidden items-center gap-6 lg:flex">
+              <button className="rounded bg-red-700 px-6 py-3 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-red-900/20 transition-all hover:bg-red-800">
+                Contact Us
+              </button>
+            </div>
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-white lg:hidden"
+            >
+              {mobileMenuOpen ? <X /> : <Menu />}
+            </button>
+          </div>
+        </nav>
+      )}
 
       {/* --- HERO SECTION --- */}
-      <section className="relative flex min-h-screen flex-col justify-center overflow-hidden pt-20">
+      <section
+        id="home"
+        className="relative flex min-h-screen flex-col justify-center overflow-hidden pt-20"
+      >
         {/* Background */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -717,7 +728,10 @@ export default function Home() {
           </div>
 
           {/* --- DOWNHOLE TECHNOLOGIES --- */}
-          <div className="mt-32 mb-12 flex items-end justify-between border-t border-white/5 pt-20">
+          <div
+            id="products"
+            className="mt-32 mb-12 flex scroll-mt-24 items-end justify-between border-t border-white/5 pt-20"
+          >
             <div>
               <h2 className="mb-4 text-4xl font-bold text-white">Downhole Technologies</h2>
               <p className="max-w-xl text-slate-400">
@@ -787,5 +801,13 @@ export default function Home() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#080808]" />}>
+      <HomeContent />
+    </Suspense>
   );
 }

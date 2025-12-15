@@ -5,7 +5,10 @@
       "Bash(npm install)",
       "Bash(npm install:*)",
       "Bash(npm run build:*)",
-      "Bash(if exist \"c:\\Users\\kyle\\package-lock.json\" echo \"Found duplicate lockfile at c:\\Users\\kyle\\package-lock.json\")"
+      "Bash(if exist \"c:\\Users\\kyle\\package-lock.json\" echo \"Found duplicate lockfile at c:\\Users\\kyle\\package-lock.json\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
