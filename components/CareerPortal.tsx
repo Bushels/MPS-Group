@@ -3,17 +3,13 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRight,
-  Briefcase,
   CheckCircle,
   ChevronDown,
   Clock,
   ExternalLink,
   Filter,
-  HardHat,
   MapPin,
   Search,
-  Sparkles,
-  TrendingUp,
   Users,
   Wrench,
   Zap,
@@ -32,15 +28,7 @@ interface Job {
   requirements: string[];
 }
 
-type JobCategory =
-  | 'Welding'
-  | 'Pipefitting'
-  | 'Electrical'
-  | 'Operations'
-  | 'QA/QC'
-  | 'Management'
-  | 'Administration'
-  | 'General Labour';
+type JobCategory = 'Welding' | 'Pipefitting' | 'General Labour';
 
 // Jobs data synced with Wix hiring system
 const JOBS: Job[] = [
@@ -75,168 +63,19 @@ const JOBS: Job[] = [
     description: 'ABSA certified pressure piping fabrication and field installation.',
     requirements: ['Journeyman ticket', 'ABSA experience', 'Blueprint reading'],
   },
-  {
-    id: 'b-pressure-welder',
-    title: 'B-Pressure Welder',
-    category: 'Welding',
-    location: 'Shop & Field',
-    type: 'Full-time',
-    urgency: 'high',
-    description: 'CWB certified B-Pressure welding for structural and pressure piping projects.',
-    requirements: ['B-Pressure ticket', 'CWB certification', 'FCAW/SMAW experience'],
-  },
-  {
-    id: 'qc-inspector',
-    title: 'QC Inspector',
-    category: 'QA/QC',
-    location: 'Fabrication Shop',
-    type: 'Full-time',
-    urgency: 'medium',
-    description: 'Quality control inspection for fabrication projects.',
-    requirements: ['QC certification', 'Welding inspection experience', 'Documentation skills'],
-  },
-  {
-    id: 'tig-welder',
-    title: 'TIG/Stainless Welder',
-    category: 'Welding',
-    location: 'Shop',
-    type: 'Full-time',
-    urgency: 'medium',
-    description: 'Precision TIG welding for stainless steel and specialty metals.',
-    requirements: ['GTAW certification', 'Stainless experience', 'Precision work'],
-  },
-  {
-    id: 'apprentice-welder',
-    title: '1st-3rd Year Welder Apprentice',
-    category: 'Welding',
-    location: 'Pierceland',
-    type: 'Apprentice',
-    urgency: 'medium',
-    description: 'Learn from industry veterans in a hands-on production environment.',
-    requirements: ['Enrolled in apprenticeship', 'Safety oriented', 'Eager to learn'],
-  },
-  {
-    id: 'journeyman-electrician',
-    title: 'Journeyman Electrician',
-    category: 'Electrical',
-    location: 'Field',
-    type: 'Full-time',
-    urgency: 'medium',
-    description: 'Industrial electrical installations and maintenance.',
-    requirements: ['Journeyman ticket', 'Industrial experience', 'PLC knowledge'],
-  },
-  {
-    id: 'apprentice-electrician',
-    title: '1st-4th Year Electrician Apprentice',
-    category: 'Electrical',
-    location: 'Field',
-    type: 'Apprentice',
-    urgency: 'normal',
-    description: 'Gain experience in industrial electrical work.',
-    requirements: ['Enrolled in apprenticeship', 'Basic electrical knowledge'],
-  },
-  {
-    id: 'steamfitter',
-    title: 'Journeyman Steamfitter',
-    category: 'Pipefitting',
-    location: 'Field Operations',
-    type: 'Full-time',
-    urgency: 'medium',
-    description: 'High-pressure steam system installation and maintenance.',
-    requirements: ['Journeyman ticket', 'Steam system experience', 'Safety certifications'],
-  },
-  {
-    id: 'crane-operator',
-    title: 'Crane Operator',
-    category: 'Operations',
-    location: 'Yard & Field',
-    type: 'Full-time',
-    urgency: 'medium',
-    description: 'Mobile and overhead crane operations for fabrication and construction.',
-    requirements: ['Valid crane ticket', 'Rigging knowledge', 'Safety record'],
-  },
-  {
-    id: 'heavy-duty-mechanic',
-    title: 'Heavy Duty Mechanic',
-    category: 'Operations',
-    location: 'Pierceland',
-    type: 'Full-time',
-    urgency: 'normal',
-    description: 'Maintenance and repair of heavy industrial equipment.',
-    requirements: ['HD Mechanic ticket', 'Fleet maintenance experience'],
-  },
-  {
-    id: 'project-manager',
-    title: 'Project Manager',
-    category: 'Management',
-    location: 'Pierceland HQ',
-    type: 'Full-time',
-    urgency: 'medium',
-    description: 'Lead fabrication and construction projects from conception to completion.',
-    requirements: ['Project management experience', 'Industrial background', 'Leadership skills'],
-  },
-  {
-    id: 'estimator',
-    title: 'Estimator',
-    category: 'Management',
-    location: 'Pierceland HQ',
-    type: 'Full-time',
-    urgency: 'normal',
-    description: 'Prepare accurate estimates for fabrication and construction bids.',
-    requirements: ['Estimating experience', 'Industry knowledge', 'Software proficiency'],
-  },
-  {
-    id: 'foreman',
-    title: 'Shop Foreman',
-    category: 'Management',
-    location: 'Fabrication Shop',
-    type: 'Full-time',
-    urgency: 'medium',
-    description: 'Supervise daily shop operations and crew management.',
-    requirements: ['Trade background', 'Supervisory experience', 'Production planning'],
-  },
-  {
-    id: 'administrator',
-    title: 'Administrator',
-    category: 'Administration',
-    location: 'Pierceland HQ',
-    type: 'Full-time',
-    urgency: 'normal',
-    description: 'Administrative support for operations and project teams.',
-    requirements: ['Office experience', 'Computer proficiency', 'Communication skills'],
-  },
 ];
 
-const CATEGORIES: JobCategory[] = [
-  'Welding',
-  'Pipefitting',
-  'Electrical',
-  'Operations',
-  'QA/QC',
-  'Management',
-  'Administration',
-  'General Labour',
-];
+const CATEGORIES: JobCategory[] = ['Welding', 'Pipefitting', 'General Labour'];
 
 const CATEGORY_ICONS: Record<JobCategory, React.ReactNode> = {
   Welding: <Zap className="h-4 w-4" />,
   Pipefitting: <Wrench className="h-4 w-4" />,
-  Electrical: <Sparkles className="h-4 w-4" />,
-  Operations: <HardHat className="h-4 w-4" />,
-  'QA/QC': <CheckCircle className="h-4 w-4" />,
-  Management: <TrendingUp className="h-4 w-4" />,
-  Administration: <Briefcase className="h-4 w-4" />,
   'General Labour': <Users className="h-4 w-4" />,
 };
 
 const CATEGORY_COLORS: Record<JobCategory, { bg: string; text: string; border: string }> = {
   Welding: { bg: 'bg-red-500/10', text: 'text-red-500', border: 'border-red-500/30' },
   Pipefitting: { bg: 'bg-blue-500/10', text: 'text-blue-500', border: 'border-blue-500/30' },
-  Electrical: { bg: 'bg-yellow-500/10', text: 'text-yellow-500', border: 'border-yellow-500/30' },
-  Operations: { bg: 'bg-orange-500/10', text: 'text-orange-500', border: 'border-orange-500/30' },
-  'QA/QC': { bg: 'bg-green-500/10', text: 'text-green-500', border: 'border-green-500/30' },
-  Management: { bg: 'bg-purple-500/10', text: 'text-purple-500', border: 'border-purple-500/30' },
-  Administration: { bg: 'bg-cyan-500/10', text: 'text-cyan-500', border: 'border-cyan-500/30' },
   'General Labour': {
     bg: 'bg-slate-500/10',
     text: 'text-slate-400',
